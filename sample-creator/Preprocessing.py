@@ -223,7 +223,25 @@ def print_and_collect_statistics(variables):
     
     # Return the dictionary with all the statistics
     return stats_dict
+def plot_pie_charts(keys, values): #Falta por implementar en caso de que queramos mostrarlos
+    """
+    Plot pie charts for each variable using keys and values.
 
+    Args:
+    - keys (list): A list of variable names.
+    - values (list): A list of lists of variable values.
+    """
+    num_variables = len(keys)
+
+    # We create the subfigures
+    fig, axes = plt.subplots(1, num_variables, figsize=(15, 7))
+
+    for i, (variable_name, variable_values) in enumerate(zip(keys, values)):
+        # Plot pie chart
+        axes[i].pie(variable_values, labels=variable_values, autopct='%1.1f%%')
+        axes[i].set_title(f'Pie Chart for {variable_name}')
+
+    plt.show()
 
 # MAIN FUCTION
 def preprocessing(df):
