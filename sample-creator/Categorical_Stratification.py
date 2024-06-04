@@ -37,10 +37,10 @@ def read_dataframe(file_path): #POR AHORA NO LO USAMOS
         return None
 def analyze_df(df): 
     """
-    Analyze a DataFrame, remove rows with NaN values in numerical columns, and print the number of NaN values.
+    Analyze a DataFrame, removed NaN values are from numerical columns but retained in categorical columns. Print the number of NaN values.
 
     Args:
-    - df (DataFrame): The input DataFrame.
+    - df (DataFrame): The input DataFrame. 
 
     Returns:
     - DataFrame: The cleaned DataFrame with rows removed if NaN values exist in numerical columns.
@@ -85,14 +85,13 @@ def create_variables_dict_from_df(df, columns=None):
     return column_lists
 def count_elements_in_variables(variables_dict): 
     """
-    Count the occurrences of elements in each list of a variables dictionary, excluding the first variable, 
-    and return a dictionary of Counters.
+    Count the occurrences of elements in each list of a variables dictionary, excluding the first variable because is the name, and return a dictionary of Counters.
 
     Args:
-    - variables_dict (dict): The dictionary of variables where keys are variable names and values are lists of elements.
+    - variables_dict (dict): The dictionary of variables where keys are variable names and values are lists of elements. The first variable is excluded from counting.
 
     Returns:
-    - dict: A dictionary containing Counters for each variable's list of elements, excluding the first variable.
+    - dict: A dictionary containing Counters for each variable's list of elements.
     """
     counters_dict = {}
     first = True
@@ -102,8 +101,7 @@ def count_elements_in_variables(variables_dict):
             continue
         counters_dict[variable] = Counter(values)
     return counters_dict
-
-def dictionary_to_lists(dictionary): #PRIVADA
+def dictionary_to_lists(dictionary): #creo que este se usa en numericas y el siguiente categoricas. JOIN
     """
     Convert a dictionary into separate lists for keys and values.
 
@@ -119,6 +117,28 @@ def dictionary_to_lists(dictionary): #PRIVADA
     
     # Return the lists
     return keys, values
+def dictionary_to_all_lists(dictionary): 
+    """
+    Convert a dictionary into separate lists of unique keys for each variable.
+
+    Args:
+    - dictionary (dict): The input dictionary.
+
+    Returns:
+    - tuple: A tuple containing two lists of lists: one for keys and one for values.
+    """
+    # Initialize empty lists for keys and values
+    all_keys = []
+    all_values = []
+    
+    # Extract keys and values from each variable's dictionary
+    for variable_dict in dictionary.values():
+        keys = list(variable_dict.keys())
+        values = list(variable_dict.values())
+        all_keys.append(keys)
+        all_values.append(values)
+    
+    return all_keys, all_values
 def print_and_collect_statistics(variables):
     """
     Print statistics for each variable in the dictionary and collect them in a dictionary.
@@ -195,34 +215,13 @@ def plot_pie_charts(keys, values): #FALTA POR ARREGLAR
         axes[i].set_title(f'Pie Chart for {variable_name}')
 
     plt.show()
-def dictionary_to_all_lists(dictionary): #PRIVADA
-    """
-    Convert a dictionary into separate lists of unique keys for each variable.
 
-    Args:
-    - dictionary (dict): The input dictionary.
-
-    Returns:
-    - tuple: A tuple containing two lists of lists: one for keys and one for values.
-    """
-    # Initialize empty lists for keys and values
-    all_keys = []
-    all_values = []
-    
-    # Extract keys and values from each variable's dictionary
-    for variable_dict in dictionary.values():
-        keys = list(variable_dict.keys())
-        values = list(variable_dict.values())
-        all_keys.append(keys)
-        all_values.append(values)
-    
-    return all_keys, all_values
 
 
 # STRATIFICATION for Categorical Variables
 def create_strata(counters_dict):
     """
-    Create strata for variables.
+    Create strata for each variable.
 
     Args:
     - counters_dict (dict): The dictionary of counters where keys are variable names and values are Counter objects.
@@ -253,11 +252,18 @@ def create_strata(counters_dict):
     return strata_dict
 
 # COMBINATION
-def combination(strata): #PRIVADA
-  # Usamos itertools.product para generar todas las combinaciones entre los elementos de las listas de entrada.
-  # Calculamos el producto cartesiano de las listas usando itertools.product y luego convertimos cada tupla en una lista.
-  return [list(comb) for comb in product(*strata)]
-def df_to_list_observations(df): #PRIVADA
+def combination(all_keys):
+    """
+    Generate all possible combinations of elements from strata.
+
+    Args:
+    - strata (list): A list of lists, where each inner list represents the strata of a variable to be combined.
+
+    Returns:
+    - list: A list containing all possible combinations of elements from the input strata.
+    """
+    return [list(comb) for comb in product(*all_keys)]
+def df_to_list_observations(df): 
     """
     Convert the rows of a DataFrame into a list of lists.
 
@@ -270,7 +276,7 @@ def df_to_list_observations(df): #PRIVADA
     # Get the rows of the DataFrame as a list of lists
     list_of_lists = df.values.tolist()
     return list_of_lists
-def count_combinations(observations, combination): #PRIVADA
+def count_combinations(observations, combination): 
     """
     Counts the occurrences of each specific combination of strata in the observations.
 
@@ -301,33 +307,6 @@ def count_combinations(observations, combination): #PRIVADA
 
 
     return combination_strata
-def classify_observations2(observations, combination_strata):
-    """
-    Classify observations into strata based on provided combinations, ignoring the first variable (assumed to be the name).
-
-    Args:
-    - observations (list): A list of observations where each observation is a list.
-    - combination_strata (list): A list of lists containing combinations.
-
-    Returns:
-    - dict: A dictionary where each key is a stratum (as a tuple) and each value is a list of observations.
-    """
-    # Initialize the dictionary with the combination keys
-    classified_observations = {tuple(comb): [] for comb in combination_strata}
-
-    # Iterate over each observation
-    for obs in observations:
-        # Extract the variables (excluding the name)
-        obs_variables = obs[1:]
-        # Iterate over each combination to classify the observation
-        for comb in combination_strata:
-            if obs_variables == comb:
-                key = tuple(comb)
-                classified_observations[key].append(obs)
-                break  # Stop checking once the observation is classified
-
-    return classified_observations
-
 def classify_observations(observations, combination_strata):
     """
     Classify observations into strata based on provided combinations, ignoring the first variable (assumed to be the name).
@@ -367,8 +346,7 @@ def extract_population_size_and_means(statistics):
     - statistics (dict): A dictionary containing statistical information for each variable.
 
     Returns:
-    - tuple: A tuple containing the population size (N) and a list of means (mu) for each numerical variable.
-             For categorical variables, only the population size is included.
+    - tuple: A tuple containing the population size (N) and a list of means (mu) for each numerical variable. For categorical variables, only the population size is included.
     """
     N = None
     mu = []
@@ -382,13 +360,12 @@ def extract_population_size_and_means(statistics):
             mu.append(stats['Mean'])
 
     return N, mu
-def nis_phi(classified_observations, N):
+def nis_phi(classified_observations, N): 
     """
     Calculate the number of observations in each stratum and their proportions with respect to the total population.
 
     Args:
-    - classified_observations (dict): A dictionary containing classified observations where each key is a stratum (as a string)
-      and each value is a list of observations.
+    - classified_observations (dict): A dictionary containing classified observations where each key is a stratum (as a string) and each value is a list of observations.
     - N (int): The total number of observations.
 
     Returns:
@@ -403,9 +380,6 @@ def nis_phi(classified_observations, N):
     phi = [ni / N for ni in nis]
 
     return nis, phi
-
-
-# SAMPLING
 def sample_size(epsilon, confidence):
     """
     Calculates the required sample size (n) given the precision (epsilon) and confidence level.
@@ -421,7 +395,6 @@ def sample_size(epsilon, confidence):
     za = norm.ppf(1 - alfa / 2)
     n = (za / (2 * epsilon)) ** 2
     return math.ceil(n)
-
 def determine_ni_size(phi, combination_strata, n):
     """
     Calculate the sample size for each stratum based on proportions and the desired total sample size.
@@ -458,6 +431,10 @@ def determine_ni_size(phi, combination_strata, n):
             n_stratum[stratum_key] += additional_allocation
 
     return n_stratum
+
+
+
+# SAMPLING
 def create_sample(n_stratum, classified_observations):
     """
     Create a sample based on the provided sample sizes for each stratum and the classified observations.
@@ -519,6 +496,7 @@ counters = count_elements_in_variables(variables)
 print(counters)
 
 keys, values = dictionary_to_lists(variables)
+print("keys: ", keys, "values: ", len(values))
 all_keys, all_values = dictionary_to_all_lists(counters)
 print("All keys: ", all_keys)
 print("All values: ", len(all_values))
@@ -531,8 +509,9 @@ statistics = print_and_collect_statistics(variables)
 # MAIN CODE - STRATIFICATION Categoricals
 print("STRATIFICATION")
 # Call the create_strata function to create the strata
-strata_dict = create_strata(counters) #SOLO ESTA pullrequest
+strata_dict = create_strata(counters) 
 # Print the lengths of each stratum and each sublist in each variable
+print("STRATA DICT:")
 for variable, strata in strata_dict.items():
     print(f"Strata for variable '{variable}': {len(strata)}")
     for i, sublist in enumerate(strata, start=1):
