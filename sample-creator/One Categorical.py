@@ -321,7 +321,7 @@ def determine_ni_size(phi, all_keys, n):
 
     Args:
     - phi (list): A list containing the proportion of each stratum with respect to the total population.
-    - all_keys (list): A list containing the unique keys for each variable.
+    - all_keys (list): A list containing the unique keys for the variable.
     - n (int): The desired total sample size.
 
     Returns:
