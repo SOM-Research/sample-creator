@@ -1,20 +1,20 @@
 # We import all the necessary librarys
 import numpy as np
-import random
+# import random
 import math
-import scipy.stats as stats
+# import scipy.stats as stats
 from sklearn.cluster import KMeans
-from scipy.stats import skew
+# from scipy.stats import skew
 from scipy.stats import norm
 import scipy
-import csv
+# import csv
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from collections import Counter
-from sklearn.preprocessing import StandardScaler
-import matplotlib
+# from sklearn.preprocessing import StandardScaler
+# import matplotlib
 from itertools import product
-matplotlib.use('TkAgg')  # Use this backend for displaying plots
+# matplotlib.use('TkAgg')  # Use this backend for displaying plots
 
 # PREPROCESSING
 def read_dataframe(file_path): #POR AHORA NO LO USAMOS
@@ -83,7 +83,7 @@ def create_variables_dict_from_df(df, columns=None):
         column_lists[column_name] = column_values
     
     return column_lists
-def count_elements_in_variables(variables_dict): 
+def count_elements_in_variables(variables_dict): # ONLY CATEGORICALS
     """
     Count the occurrences of elements in each list of a variables dictionary, excluding the first variable because is the name, and return a dictionary of Counters.
 
@@ -101,7 +101,7 @@ def count_elements_in_variables(variables_dict):
             continue
         counters_dict[variable] = Counter(values)
     return counters_dict
-def dictionary_to_lists(dictionary): #creo que este se usa en numericas y el siguiente categoricas. JOIN
+def dictionary_to_lists(dictionary): # TO REMOVE. creo que este se usa en numericas y el siguiente categoricas. JOIN
     """
     Convert a dictionary into separate lists for keys and values.
 
@@ -117,7 +117,7 @@ def dictionary_to_lists(dictionary): #creo que este se usa en numericas y el sig
     
     # Return the lists
     return keys, values
-def dictionary_to_all_lists(dictionary): 
+def dictionary_to_all_lists(dictionary): # ONLY CATEGOR
     """
     Convert a dictionary into separate lists of unique keys for each variable.
 
@@ -139,7 +139,7 @@ def dictionary_to_all_lists(dictionary):
         all_values.append(values)
     
     return all_keys, all_values
-def print_and_collect_statistics(variables):
+def print_and_collect_statistics(variables): # SAME AS NUMERICAL
     """
     Print statistics for each variable in the dictionary and collect them in a dictionary.
 
@@ -196,7 +196,7 @@ def print_and_collect_statistics(variables):
     
     # Return the dictionary with all the statistics
     return stats_dict
-def plot_pie_charts(keys, values): #FALTA POR ARREGLAR
+def plot_pie_charts(keys, values): # TO REMOVE. FALTA POR ARREGLAR
     """
     Plot pie charts for each variable using keys and values.
 
@@ -219,7 +219,7 @@ def plot_pie_charts(keys, values): #FALTA POR ARREGLAR
 
 
 # STRATIFICATION for Categorical Variables
-def create_strata(counters_dict):
+def create_strata(counters_dict): # ONLY CAT
     """
     Create strata for each variable.
 
@@ -252,7 +252,7 @@ def create_strata(counters_dict):
     return strata_dict
 
 # COMBINATION
-def combination(all_keys):
+def combination(all_keys): # ONLY CAT
     """
     Generate all possible combinations of elements from strata.
 
@@ -263,7 +263,7 @@ def combination(all_keys):
     - list: A list containing all possible combinations of elements from the input strata.
     """
     return [list(comb) for comb in product(*all_keys)]
-def df_to_list_observations(df): 
+def df_to_list_observations(df): # NOT REQUIRED, PUT CODE INTO FUNCTION
     """
     Convert the rows of a DataFrame into a list of lists.
 
@@ -276,7 +276,7 @@ def df_to_list_observations(df):
     # Get the rows of the DataFrame as a list of lists
     list_of_lists = df.values.tolist()
     return list_of_lists
-def count_combinations(observations, combination): 
+def count_combinations(observations, combination): # ONLY FOR CATEGORICAL
     """
     Counts the occurrences of each specific combination of strata in the observations.
 
@@ -307,7 +307,7 @@ def count_combinations(observations, combination):
 
 
     return combination_strata
-def classify_observations(observations, combination_strata):
+def classify_observations(observations, combination_strata): # ONLY FOR CAT
     """
     Classify observations into strata based on provided combinations, ignoring the first variable (assumed to be the name).
 
@@ -380,7 +380,7 @@ def nis_phi(classified_observations, N):
     phi = [ni / N for ni in nis]
 
     return nis, phi
-def sample_size(epsilon, confidence):
+def sample_size(epsilon, confidence): # ONLY FOR CAT
     """
     Calculates the required sample size (n) given the precision (epsilon) and confidence level.
 
@@ -395,7 +395,7 @@ def sample_size(epsilon, confidence):
     za = norm.ppf(1 - alfa / 2)
     n = (za / (2 * epsilon)) ** 2
     return math.ceil(n)
-def determine_ni_size(phi, combination_strata, n):
+def determine_ni_size(phi, combination_strata, n): # ONLY FOR CAT
     """
     Calculate the sample size for each stratum based on proportions and the desired total sample size.
 
@@ -435,7 +435,7 @@ def determine_ni_size(phi, combination_strata, n):
 
 
 # SAMPLING
-def create_sample(n_stratum, classified_observations):
+def create_sample(n_stratum, classified_observations): # ONLY FOR CAT
     """
     Create a sample based on the provided sample sizes for each stratum and the classified observations.
 
@@ -460,7 +460,7 @@ def create_sample(n_stratum, classified_observations):
 
 
     return stratified_sample
-def count_combinations_final(observations):
+def count_combinations_final(observations): # NOT REQUIRED.
     """
     Count the occurrences of each combination, ignoring the first element of each sublist.
 
@@ -479,99 +479,100 @@ def count_combinations_final(observations):
 
     return combinations_count
 
-# MAIN CODE - PREPROCESSING
-print("PREPROCESSING:")
-'''
-file_path = "C:/Users/goros/OneDrive/Escritorio/UOC/space.csv"
-df = read_dataframe(file_path)
-print(df)
-'''
-file_path = r"C:\Users\goros\OneDrive\Escritorio\UOC\type_pull.csv" # Read the CSV file without an index
-df = pd.read_csv(file_path)
-df.insert(0, 'New_Index', range(1, len(df) + 1)) # Add a new column as index
-print(df) # Display the DataFrame with the new index
-df_clean = analyze_df(df)
-variables = create_variables_dict_from_df(df_clean) #diccionario de las variables -> lista de valores
-counters = count_elements_in_variables(variables)
-print(counters)
 
-keys, values = dictionary_to_lists(variables)
-print("keys: ", keys, "values: ", len(values))
-all_keys, all_values = dictionary_to_all_lists(counters)
-print("All keys: ", all_keys)
-print("All values: ", len(all_values))
+# # MAIN CODE - PREPROCESSING
+# print("PREPROCESSING:")
+# '''
+# file_path = "C:/Users/goros/OneDrive/Escritorio/UOC/space.csv"
+# df = read_dataframe(file_path)
+# print(df)
+# '''
+# file_path = r"C:\Users\goros\OneDrive\Escritorio\UOC\type_pull.csv" # Read the CSV file without an index
+# df = pd.read_csv(file_path)
+# df.insert(0, 'New_Index', range(1, len(df) + 1)) # Add a new column as index
+# print(df) # Display the DataFrame with the new index
+# df_clean = analyze_df(df)
+# variables = create_variables_dict_from_df(df_clean) #diccionario de las variables -> lista de valores
+# counters = count_elements_in_variables(variables)
+# print(counters)
 
-statistics = print_and_collect_statistics(variables)
-#plot_pie_charts(keys, values)
+# keys, values = dictionary_to_lists(variables)
+# print("keys: ", keys, "values: ", len(values))
+# all_keys, all_values = dictionary_to_all_lists(counters)
+# print("All keys: ", all_keys)
+# print("All values: ", len(all_values))
 
-
-
-# MAIN CODE - STRATIFICATION Categoricals
-print("STRATIFICATION")
-# Call the create_strata function to create the strata
-strata_dict = create_strata(counters) 
-# Print the lengths of each stratum and each sublist in each variable
-print("STRATA DICT:")
-for variable, strata in strata_dict.items():
-    print(f"Strata for variable '{variable}': {len(strata)}")
-    for i, sublist in enumerate(strata, start=1):
-        print(f"Length of stratum {i}: {len(sublist)}")
+# statistics = print_and_collect_statistics(variables)
+# #plot_pie_charts(keys, values)
 
 
 
-# MAIN CODE - COMBINATION
-print("COMBINATION")
-combination_strata = combination(all_keys)
-print(combination_strata)
-observations = df_to_list_observations(df_clean)
+# # MAIN CODE - STRATIFICATION Categoricals
+# print("STRATIFICATION")
+# # Call the create_strata function to create the strata
+# strata_dict = create_strata(counters) 
+# # Print the lengths of each stratum and each sublist in each variable
+# print("STRATA DICT:")
+# for variable, strata in strata_dict.items():
+#     print(f"Strata for variable '{variable}': {len(strata)}")
+#     for i, sublist in enumerate(strata, start=1):
+#         print(f"Length of stratum {i}: {len(sublist)}")
 
-count_onservations_combination = count_combinations(observations, combination_strata)
-print(count_onservations_combination)
 
-classified_observations = classify_observations(observations, combination_strata)
-print("CLASSIFIED OBSERVATIONS")
-for comb, obs_list in classified_observations.items():
-    print(f"Stratum {comb}: {len(obs_list)} observations")
 
-# Verificar que cada sublista en las listas del diccionario tenga tres elementos
-for comb, obs_list in classified_observations.items():
-    for obs in obs_list:
-        if len(obs) != 3:
-            raise ValueError(f"Each sublist in the observations associated with combination {comb} must have a length of three.")
+# # MAIN CODE - COMBINATION
+# print("COMBINATION")
+# combination_strata = combination(all_keys)
+# print(combination_strata)
+# observations = df_to_list_observations(df_clean)
+
+# count_onservations_combination = count_combinations(observations, combination_strata)
+# print(count_onservations_combination)
+
+# classified_observations = classify_observations(observations, combination_strata)
+# print("CLASSIFIED OBSERVATIONS")
+# for comb, obs_list in classified_observations.items():
+#     print(f"Stratum {comb}: {len(obs_list)} observations")
+
+# # Verificar que cada sublista en las listas del diccionario tenga tres elementos
+# for comb, obs_list in classified_observations.items():
+#     for obs in obs_list:
+#         if len(obs) != 3:
+#             raise ValueError(f"Each sublist in the observations associated with combination {comb} must have a length of three.")
         
 
-# MAIN CODE - PRESAMPLING
-N, means = extract_population_size_and_means(statistics)
-print(f"Population Size: {N}")
-nis, phi = nis_phi(classified_observations, N)
-print(f"Number of observations in each stratum (nis): {nis}")
-print(f"Proportion of each stratum (phi): {phi}")
+# # MAIN CODE - PRESAMPLING
+# N, means = extract_population_size_and_means(statistics)
+# print(f"Population Size: {N}")
+# nis, phi = nis_phi(classified_observations, N) # class_obs to strata_dict
+# print(f"Number of observations in each stratum (nis): {nis}")
+# print(f"Proportion of each stratum (phi): {phi}")
 
 
-# MAIN CODE - SAMPLING
-epsilon = 0.05
-confidence = 0.95
-n = sample_size(epsilon, confidence)
-print("Required sample size:", n)
+# # MAIN CODE - SAMPLING
+# epsilon = 0.05
+# confidence = 0.95
+# n = sample_size(epsilon, confidence)
+# print("Required sample size:", n)
 
-ni_size = determine_ni_size(phi, combination_strata, n)
-print("SAMPLE SIZE OF EACH STRATUM")
-for stratum_key, size in ni_size.items():
-    print(f"Stratum {stratum_key}: {size} observations")
+# ni_size = determine_ni_size(phi, combination_strata, n)
+# print("SAMPLE SIZE OF EACH STRATUM")
+# for stratum_key, size in ni_size.items():
+#     print(f"Stratum {stratum_key}: {size} observations")
 
-# Create the stratified sample
-sample = create_sample(ni_size, classified_observations)
+# # Create the stratified sample
+# sample = create_sample(ni_size, classified_observations)
 
-# Print the stratified sample size and a few sample entries to verify
-print(f"Total stratified sample size: {len(sample)}")
-print("Sample entries:")
-for i in range(10):  # Print the first 10 sample entries
-    print(sample[i])
+# # Print the stratified sample size and a few sample entries to verify
+# print(f"Total stratified sample size: {len(sample)}")
+# print("Sample entries:")
+# for i in range(10):  # Print the first 10 sample entries
+#     print(sample[i])
 
-# Llamada a la función para contar las combinaciones
-final_combination_counts = count_combinations_final(sample)
+# # Llamada a la función para contar las combinaciones
+# final_combination_counts = count_combinations_final(sample)
 
-# Imprimir el resultado
-print("Counts of each combination:")
-for combination, count in final_combination_counts.items():
-    print(f"Combination: {combination}, Count: {count}")
+# # Imprimir el resultado
+# print("Counts of each combination:")
+# for combination, count in final_combination_counts.items():
+#     print(f"Combination: {combination}, Count: {count}")

@@ -1,20 +1,20 @@
 # We import all the necessary librarys
 import numpy as np
-import random
 import math
-import scipy.stats as stats
-from sklearn.cluster import KMeans
-from scipy.stats import skew
-from scipy.stats import norm
-import scipy
-import csv
+# import random
+# import scipy.stats as stats
+# from sklearn.cluster import KMeans
+# from scipy.stats import skew
+# from scipy.stats import norm
+# import scipy
+# import csv
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from collections import Counter
-from sklearn.preprocessing import StandardScaler
-import matplotlib
-from itertools import product
-matplotlib.use('TkAgg')  # Use this backend for displaying plots
+# from sklearn.preprocessing import StandardScaler
+# import matplotlib
+# from itertools import product
+# matplotlib.use('TkAgg')  # Use this backend for displaying plots
 
 
 # FUNCIONES PRIVADAS
@@ -143,6 +143,7 @@ def count_elements_in_variables(variables_dict): # Descomentar el salto del name
             #continue
         counters_dict[variable] = Counter(values)
     return counters_dict
+
 def dictionary_to_all_lists(dictionary): 
     """
     Convert a dictionary into separate lists of unique keys for each variable.
@@ -223,7 +224,8 @@ def print_and_collect_statistics(variables):
     
     # Return the dictionary with all the statistics
     return stats_dict
-def plot_pie_charts(keys, values): #Falta por implementar en caso de que queramos mostrarlos
+
+def plot_pie_charts(keys, values): #TO REMOVE. Falta por implementar en caso de que queramos mostrarlos
     """
     Plot pie charts for each variable using keys and values.
 
@@ -295,7 +297,7 @@ def preprocessing(df):
 
 
 
-file_path = r"C:\Users\goros\OneDrive\Escritorio\UOC\type_likes.csv" 
+file_path = r"type_likes.csv" 
 df = pd.read_csv(file_path)
 df.insert(0, 'New_Index', range(1, len(df) + 1)) #Esto solo es para los csv que tengo yo. Borrar desupes.
 print(df) 

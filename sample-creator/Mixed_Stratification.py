@@ -16,7 +16,7 @@ import matplotlib
 from itertools import product
 matplotlib.use('TkAgg')  # Use this backend for displaying plots
 
-# PREPROCESSING
+# PREPROCESSING - NOT NECESSARY, TAKE FROM CAT/NUM, BUT separate_numerical_categorical
 def read_dataframe(file_path): #POR AHORA NO LO USAMOS
     """
     Reads a DataFrame from a CSV file.
@@ -83,7 +83,7 @@ def create_variables_dict_from_df(df, columns=None):
         column_lists[column_name] = column_values
     
     return column_lists
-def separate_numerical_categorical(variables):
+def separate_numerical_categorical(variables): # ONLY FOR MIXED
     """
     Separate numerical and categorical variables from a dictionary containing variables.
 
@@ -123,7 +123,7 @@ def count_elements_in_variables(variables_dict):
             continue
         counters_dict[variable] = Counter(values)
     return counters_dict
-def dictionary_to_lists(dictionary): #creo que este se usa en numericas y el siguiente categoricas. JOIN
+def dictionary_to_lists(dictionary): # TO CHECK
     """
     Convert a dictionary into separate lists for keys and values.
 
@@ -139,7 +139,7 @@ def dictionary_to_lists(dictionary): #creo que este se usa en numericas y el sig
     
     # Return the lists
     return keys, values
-def dictionary_to_all_lists(dictionary): 
+def dictionary_to_all_lists(dictionary): # TO CHECK
     """
     Convert a dictionary into separate lists of unique keys for each variable.
 
@@ -219,8 +219,8 @@ def print_and_collect_statistics(variables):
     # Return the dictionary with all the statistics
     return stats_dict
 
-#STRATIFICATION
-def create_strata_kmeans(variables, num_clusters_list):
+# STRATIFICATION
+def create_strata_kmeans(variables, num_clusters_list): # SAME AS NUM
     """
     Apply KMeans clustering to each numeric variable in a list of variables with variable number of clusters.
 
@@ -269,7 +269,7 @@ def print_stratum_counts(strata):
         for i, stratum_values in enumerate(stratum_list):
             print(f"  Stratum {i + 1}: {len(stratum_values)} points")
         print()
-def create_strata_categoricals(counters_dict):
+def create_strata_categoricals(counters_dict): # SAME AS CAT
     """
     Create strata for each variable.
 
@@ -300,7 +300,7 @@ def create_strata_categoricals(counters_dict):
 
     # Return the dictionary containing the strata for each variable
     return strata_dict
-def merge_strata_dicts(dict1, dict2):
+def merge_strata_dicts(dict1, dict2): # ONLY FOR MIX. PREPARE DATA FOR PRINT STRATA.
     """
     Merge two dictionaries containing strata for variables into one dictionary.
 
@@ -320,7 +320,7 @@ def merge_strata_dicts(dict1, dict2):
     return merged_dict
 
 # COMBINATION
-def get_stratum_ranges(strata):
+def get_stratum_ranges(strata): # SAME AS NUM.
     """
     Get the ranges of each stratum for each variable.
 
@@ -347,7 +347,7 @@ def get_stratum_ranges(strata):
         ranges[variable_name] = variable_ranges
 
     return ranges
-def combination(numerical_ranges, categorical_keys):
+def combination(numerical_ranges, categorical_keys): # ONLY FOR MIX.
     """
     Generate all possible combinations of elements from numerical ranges and categorical keys.
 
@@ -365,7 +365,7 @@ def combination(numerical_ranges, categorical_keys):
     combinations = [list(comb) for comb in product(*categorical_keys, *numerical_ranges_list)]
 
     return combinations
-def df_to_list_observations(df): 
+def df_to_list_observations(df): # CAN GO TO CLASSIFY 
     """
     Convert the rows of a DataFrame into a list of lists.
 
@@ -378,7 +378,7 @@ def df_to_list_observations(df):
     # Get the rows of the DataFrame as a list of lists
     list_of_lists = df.values.tolist()
     return list_of_lists
-def classify_mixed_observations(observations, combination_strata):
+def classify_mixed_observations(observations, combination_strata): # ONLY FOR MIX
     """
     Classify observations into strata based on provided combinations, ignoring the first variable (assumed to be the name).
 
@@ -410,7 +410,7 @@ def classify_mixed_observations(observations, combination_strata):
     return classified_observations
 
 # PRE-SAMPLING
-def extract_population_size_and_means(statistics):
+def extract_population_size_and_means(statistics): # ALL
     """
     Extract the population size and means from the statistics dictionary.
     Handles both numerical and categorical variables.
@@ -433,7 +433,7 @@ def extract_population_size_and_means(statistics):
             mu.append(stats['Mean'])
 
     return N, mu
-def nis_phi(classified_observations, N):
+def nis_phi(classified_observations, N): # ALL
     """
     Calculate the number of observations in each stratum and their proportions with respect to the total population.
 
@@ -454,7 +454,7 @@ def nis_phi(classified_observations, N):
     phi = [ni / N for ni in nis]
 
     return nis, phi
-def sample_size(epsilon, confidence):
+def sample_size(epsilon, confidence): # CAT
     """
     Calculates the required sample size (n) given the precision (epsilon) and confidence level.
 
@@ -469,7 +469,7 @@ def sample_size(epsilon, confidence):
     za = norm.ppf(1 - alfa / 2)
     n = (za / (2 * epsilon)) ** 2
     return math.ceil(n)
-def determine_ni_size(phi, combination_strata, n):
+def determine_ni_size(phi, combination_strata, n): # ONLY FOR MIX. MAYBE SAME AS CAT, TO REVIEW.
     """
     Calculate the sample size for each stratum based on proportions and the desired total sample size.
 
@@ -507,7 +507,7 @@ def determine_ni_size(phi, combination_strata, n):
     return n_stratum
 
 # SAMPLING
-def create_sample(n_stratum, classified_observations):
+def create_sample(n_stratum, classified_observations): # STILL WORKING...
     """
     Create a sample based on the provided sample sizes for each stratum and the classified observations.
 
