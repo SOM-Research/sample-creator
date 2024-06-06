@@ -16,7 +16,7 @@ import matplotlib
 from itertools import product
 matplotlib.use('TkAgg')  # Use this backend for displaying plots
 
-# PREPROCESSING - NOT NECESSARY, TAKE FROM CAT/NUM, BUT separate_numerical_categorical
+# PREPROCESSING
 def read_dataframe(file_path): #POR AHORA NO LO USAMOS
     """
     Reads a DataFrame from a CSV file.
@@ -83,7 +83,7 @@ def create_variables_dict_from_df(df, columns=None):
         column_lists[column_name] = column_values
     
     return column_lists
-def separate_numerical_categorical(variables): # ONLY FOR MIXED
+def separate_numerical_categorical(variables):
     """
     Separate numerical and categorical variables from a dictionary containing variables.
 
@@ -123,7 +123,7 @@ def count_elements_in_variables(variables_dict):
             continue
         counters_dict[variable] = Counter(values)
     return counters_dict
-def dictionary_to_lists(dictionary): # TO CHECK
+def dictionary_to_lists(dictionary): #creo que este se usa en numericas y el siguiente categoricas. JOIN
     """
     Convert a dictionary into separate lists for keys and values.
 
@@ -139,7 +139,7 @@ def dictionary_to_lists(dictionary): # TO CHECK
     
     # Return the lists
     return keys, values
-def dictionary_to_all_lists(dictionary): # TO CHECK
+def dictionary_to_all_lists(dictionary): 
     """
     Convert a dictionary into separate lists of unique keys for each variable.
 
@@ -219,8 +219,8 @@ def print_and_collect_statistics(variables):
     # Return the dictionary with all the statistics
     return stats_dict
 
-# STRATIFICATION
-def create_strata_kmeans(variables, num_clusters_list): # SAME AS NUM
+#STRATIFICATION
+def create_strata_kmeans(variables, num_clusters_list):
     """
     Apply KMeans clustering to each numeric variable in a list of variables with variable number of clusters.
 
@@ -269,7 +269,7 @@ def print_stratum_counts(strata):
         for i, stratum_values in enumerate(stratum_list):
             print(f"  Stratum {i + 1}: {len(stratum_values)} points")
         print()
-def create_strata_categoricals(counters_dict): # SAME AS CAT
+def create_strata_categoricals(counters_dict):
     """
     Create strata for each variable.
 
@@ -300,7 +300,7 @@ def create_strata_categoricals(counters_dict): # SAME AS CAT
 
     # Return the dictionary containing the strata for each variable
     return strata_dict
-def merge_strata_dicts(dict1, dict2): # ONLY FOR MIX. PREPARE DATA FOR PRINT STRATA.
+def merge_strata_dicts(dict1, dict2):
     """
     Merge two dictionaries containing strata for variables into one dictionary.
 
@@ -320,7 +320,7 @@ def merge_strata_dicts(dict1, dict2): # ONLY FOR MIX. PREPARE DATA FOR PRINT STR
     return merged_dict
 
 # COMBINATION
-def get_stratum_ranges(strata): # SAME AS NUM.
+def get_stratum_ranges(strata):
     """
     Get the ranges of each stratum for each variable.
 
@@ -347,7 +347,7 @@ def get_stratum_ranges(strata): # SAME AS NUM.
         ranges[variable_name] = variable_ranges
 
     return ranges
-def combination(numerical_ranges, categorical_keys): # ONLY FOR MIX.
+def combination(numerical_ranges, categorical_keys):
     """
     Generate all possible combinations of elements from numerical ranges and categorical keys.
 
@@ -365,7 +365,7 @@ def combination(numerical_ranges, categorical_keys): # ONLY FOR MIX.
     combinations = [list(comb) for comb in product(*categorical_keys, *numerical_ranges_list)]
 
     return combinations
-def df_to_list_observations(df): # CAN GO TO CLASSIFY 
+def df_to_list_observations(df): 
     """
     Convert the rows of a DataFrame into a list of lists.
 
@@ -378,7 +378,7 @@ def df_to_list_observations(df): # CAN GO TO CLASSIFY
     # Get the rows of the DataFrame as a list of lists
     list_of_lists = df.values.tolist()
     return list_of_lists
-def classify_mixed_observations(observations, combination_strata): # ONLY FOR MIX
+def classify_mixed_observations(observations, combination_strata):
     """
     Classify observations into strata based on provided combinations, ignoring the first variable (assumed to be the name).
 
@@ -388,7 +388,7 @@ def classify_mixed_observations(observations, combination_strata): # ONLY FOR MI
                                  Each inner list contains a variable name and its associated range.
 
     Returns:
-    - dict: A dictionary where each key is a stratum (as a string) and each value is a list of observations.
+    - dict: A dictionary where each key is a stratum and each value is a list of observations.
     """
     classified_observations = {str(stratum): [] for stratum in combination_strata}
 
@@ -410,7 +410,7 @@ def classify_mixed_observations(observations, combination_strata): # ONLY FOR MI
     return classified_observations
 
 # PRE-SAMPLING
-def extract_population_size_and_means(statistics): # ALL
+def extract_population_size_and_means(statistics):
     """
     Extract the population size and means from the statistics dictionary.
     Handles both numerical and categorical variables.
@@ -433,13 +433,12 @@ def extract_population_size_and_means(statistics): # ALL
             mu.append(stats['Mean'])
 
     return N, mu
-def nis_phi(classified_observations, N): # ALL
+def nis_phi(classified_observations, N):
     """
     Calculate the number of observations in each stratum and their proportions with respect to the total population.
 
     Args:
-    - classified_observations (dict): A dictionary containing classified observations where each key is a stratum
-                                       and each value is a list of observations.
+    - classified_observations (dict): A dictionary containing classified observations where each key is a stratum and each value is a list of observations.
     - N (int): The total population size.
 
     Returns:
@@ -454,7 +453,7 @@ def nis_phi(classified_observations, N): # ALL
     phi = [ni / N for ni in nis]
 
     return nis, phi
-def sample_size(epsilon, confidence): # CAT
+def sample_size(epsilon, confidence):
     """
     Calculates the required sample size (n) given the precision (epsilon) and confidence level.
 
@@ -469,7 +468,8 @@ def sample_size(epsilon, confidence): # CAT
     za = norm.ppf(1 - alfa / 2)
     n = (za / (2 * epsilon)) ** 2
     return math.ceil(n)
-def determine_ni_size(phi, combination_strata, n): # ONLY FOR MIX. MAYBE SAME AS CAT, TO REVIEW.
+
+def determine_ni_size(phi, combination_strata, n):
     """
     Calculate the sample size for each stratum based on proportions and the desired total sample size.
 
@@ -507,35 +507,34 @@ def determine_ni_size(phi, combination_strata, n): # ONLY FOR MIX. MAYBE SAME AS
     return n_stratum
 
 # SAMPLING
-def create_sample(n_stratum, classified_observations): # STILL WORKING...
+def create_sample(classified_observations, ni_size):
     """
-    Create a sample based on the provided sample sizes for each stratum and the classified observations.
+    Create a combined sample from classified observations based on the sample sizes determined for each stratum.
 
     Args:
-    - n_stratum (dict): A dictionary where each key is a stratum (as a string) and each value is the calculated sample size for that stratum.
-    - classified_observations (dict): A dictionary where each key is a stratum (as a string) and each value is a list of observations classified under that stratum.
+    - classified_observations (dict): A dictionary containing classified observations where each key is a stratum and each value is a list of observations.
+    - ni_size (dict): A dictionary where each key is a stratum (as a string) and each value is the calculated sample size for that stratum.
 
     Returns:
-    - list: A list representing the sample, where each element is a sublist representing an observation.
+    - list: A list containing the combined sample of observations.
     """
-    stratified_sample = []
+    sample = []
 
-    # Iterate over each stratum and replicate observations according to the sample size
-    for key, sample_size in n_stratum.items():
-        print(f"Stratum: {key}, Sample size: {sample_size}")  # Print stratum and sample size
-        # Find observations classified under the current stratum
-        observations = classified_observations.get(key, [])
+    # Iterate over the values of both dictionaries simultaneously
+    for (classified_obs_list, n_samples) in zip(classified_observations.values(), ni_size.values()):
+        # If the sample size for the current stratum is zero, skip to the next stratum
+        if n_samples == 0:
+            continue
         
-        # Check if sample size is greater than 0 and there are observations available
-        if sample_size > 0 and observations:
-            print(f"Taking {sample_size} observations from {len(observations)} available")  # Print number of observations to take
-            # Take a random sample of observations of the specified size
-            sampled_observations = random.sample(observations, min(sample_size, len(observations)))
-            # Extend the stratified sample with the sampled observations
-            stratified_sample.extend(sampled_observations)
+        # If the sample size is greater than the number of observations in the stratum,
+        # add all observations in the stratum to the sample
+        if n_samples >= len(classified_obs_list):
+            sample.extend(classified_obs_list)
+        else:
+            # Otherwise, randomly select n_samples observations from the stratum and add them to the sample
+            sample.extend(random.sample(classified_obs_list, n_samples))
 
-    return stratified_sample
-
+    return sample
 
 
 #MAIN CODE - PREPROCESSING
@@ -614,7 +613,7 @@ classified_observations = classify_mixed_observations(observations, combination_
 total_observations = 0
 for stratum, obs_list in classified_observations.items():
     total_observations += len(obs_list)
-    print(f"Stratum: {stratum}, Number of Elements: {len(obs_list)}")
+    print(f"Stratum: {stratum}: {len(obs_list)} observations")
 print("Total Observations:", total_observations)
 
 # Verificar que cada sublista en las listas del diccionario tenga tres elementos
@@ -639,14 +638,15 @@ print("Required sample size:", n)
 ni_size = determine_ni_size(phi, combination_strata, n)
 print("SAMPLE SIZE OF EACH STRATUM")
 for stratum_key, size in ni_size.items():
-    print(f"Stratum {stratum_key}: {size} observations")
+    print(f"Stratum {stratum_key}: {size} observations", type(size))
+
 
 
 # MAIN CODE - SAMPLING
-sample = create_sample(ni_size, classified_observations)
-print("Sample Length:", len(sample))
-print("First 10 Elements:")
-for i, observation in enumerate(sample[:10], start=1):
-    print(f"Observation {i}: {observation}")
+combined_sample = create_sample(classified_observations, ni_size)
+print("Combined Sample Size:", len(combined_sample))
 
- 
+# Imprimir los primeros diez elementos del combined_sample
+print("\nPrimeros diez elementos del combined sample:")
+for i in range(min(10, len(combined_sample))):
+    print(combined_sample[i])
