@@ -102,7 +102,36 @@ def determine_ni_size(phi, combination_strata, n): # ONLY FOR MIX. MAYBE SAME AS
 
     return n_stratum
 
-def create_sample(n_stratum, classified_observations): # TODO: STILL WORKING...
+def create_sample(classified_observations, ni_size):
+    """
+    Create a combined sample from classified observations based on the sample sizes determined for each stratum.
+
+    Args:
+    - classified_observations (dict): A dictionary containing classified observations where each key is a stratum and each value is a list of observations.
+    - ni_size (dict): A dictionary where each key is a stratum (as a string) and each value is the calculated sample size for that stratum.
+
+    Returns:
+    - list: A list containing the combined sample of observations.
+    """
+    sample = []
+
+    # Iterate over the values of both dictionaries simultaneously
+    for (classified_obs_list, n_samples) in zip(classified_observations.values(), ni_size.values()):
+        # If the sample size for the current stratum is zero, skip to the next stratum
+        if n_samples == 0:
+            continue
+        
+        # If the sample size is greater than the number of observations in the stratum,
+        # add all observations in the stratum to the sample
+        if n_samples >= len(classified_obs_list):
+            sample.extend(classified_obs_list)
+        else:
+            # Otherwise, randomly select n_samples observations from the stratum and add them to the sample
+            sample.extend(random.sample(classified_obs_list, n_samples))
+
+    return sample
+
+def create_sample_old(n_stratum, classified_observations): # TODO: STILL WORKING...
     """
     Create a sample based on the provided sample sizes for each stratum and the classified observations.
 

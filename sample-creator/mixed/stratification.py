@@ -1,5 +1,5 @@
 from sklearn.cluster import KMeans
-
+import numpy as np
 
 
 def create_strata_kmeans(variables, num_clusters_list): # SAME AS NUM

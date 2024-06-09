@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.stats as stats
 
-def extract_population_size_and_means(statistics): # SAME FOR CAT, NUM, MIXT
+def extract_population_size_and_means(statistics):
     """
     Extract the population size and means from the statistics dictionary.
 
@@ -16,13 +16,13 @@ def extract_population_size_and_means(statistics): # SAME FOR CAT, NUM, MIXT
     
     for variable_name, stats in statistics.items():
         if N is None:
-            N = stats['Population Size']  # Assuming the population size is the same for all variables # TODO: That's not always true
+            N = stats['Population Size']  # TODO: Assuming the population size is the same for all variables # TODO: That's not always true
         if 'Mean' in stats:
             mu.append(stats['Mean'])
     
     return N, mu
 
-def nis_phi(classified_observations, N): # SAME FOR CAT, NUM, PHI
+def nis_phi(classified_observations, N):
     """
     Calculate the number of observations in each stratum and their proportions with respect to the total population.
 
@@ -42,7 +42,27 @@ def nis_phi(classified_observations, N): # SAME FOR CAT, NUM, PHI
 
     return nis, phi
 
-def calculate_variable_std_devs(classified_observations): 
+def calculate_std_devs_single(stratum_dict):
+    """
+    Calculate the standard deviations for each stratum in the stratum dictionary.
+
+    Args:
+    - stratum_dict (dict): A dictionary containing strata for the variable.
+                           The structure is {stratum_id: [values]}.
+
+    Returns:
+    - list: A list containing the standard deviations for each stratum.
+    """
+    std_devs = []
+    
+    # Iterate over each stratum in the dictionary
+    for values in stratum_dict.values():
+        std_dev = np.std(values)
+        std_devs.append(std_dev)
+    
+    return std_devs
+
+def calculate_variable_std_devs_multiple(classified_observations): 
     """
     Calculate the standard deviations of each variable for each stratum, excluding the first variable (assumed to be names).
 
@@ -81,7 +101,24 @@ def calculate_variable_std_devs(classified_observations):
 
 def nStratifiedSampling(epsilon, confidence, phi, s, setting, N, nis):
     """
-    JUNE: EXPLAIN FUNCTION
+    Calculate the sample size for stratified sampling based on given parameters.
+
+    Args:
+    - epsilon (float): Desired precision.
+    - confidence (float): Confidence level (e.g., 0.95 for 95% confidence).
+    - phi (list): Proportion of each stratum with respect to the total population.
+    - s (list): Standard deviation of each stratum.
+    - setting (int): Type of setting for sampling fraction calculation:
+        - 1: Equal allocation to each stratum.
+        - 2: Proportional allocation based on stratum proportion.
+        - 3: Optimal allocation based on he variability in each stratum.
+    - N (int): Total population size.
+    - nis (list): Number of observations in each stratum.
+
+    Returns:
+    - tuple: A tuple containing:
+        - n (int): Total sample size.
+        - n_strata (list): Sample size of each stratum.
     """
     K = len(phi)  # Number of strata
     alfa = 1 - confidence
@@ -127,7 +164,7 @@ def nStratifiedSampling(epsilon, confidence, phi, s, setting, N, nis):
 
 def calculate_sample_sizes(mu, confidence, phi, all_s, setting, N, nis):
     """
-    JUNE: TO FILL
+    TODO: JUNE: TO FILL
     """
     sample_sizes = []
     strata = []
@@ -187,7 +224,7 @@ def filter_zero_strata(max_n_dist, phi, nis, s, max_n_idx, classified_observatio
 
     return filtered_max_n_dist, filtered_phi, filtered_nis, filtered_s, filtered_classified_observations
 
-def sampling(classified_observations, index, phi_list, nis_list, s_list, max_n_idx, max_n, max_n_dist):
+def __sampling_multiple__(classified_observations, index, phi_list, nis_list, s_list, max_n_idx, max_n, max_n_dist):
     """
     Calculate sampling statistics.
 
@@ -232,7 +269,7 @@ def sampling(classified_observations, index, phi_list, nis_list, s_list, max_n_i
 
     return mean, lower_interval, upper_interval 
 
-def automated_sampling(classified_observations, phi, nis, s, max_n_idx, max_n, max_n_dist):
+def sampling_multiple(classified_observations, phi, nis, s, max_n_idx, max_n, max_n_dist):
     """
     Perform sampling for all variables in classified_observations and print the results.
 
@@ -251,7 +288,7 @@ def automated_sampling(classified_observations, phi, nis, s, max_n_idx, max_n, m
         if idx == 0:
             continue 
 
-        mean, lower_interval, upper_interval = sampling(
+        mean, lower_interval, upper_interval = __sampling_multiple__(
             classified_observations=classified_observations,
             index=idx,   
             phi_list=phi,
@@ -268,3 +305,43 @@ def automated_sampling(classified_observations, phi, nis, s, max_n_idx, max_n, m
         print("  Estimated mean: ", mean)
         print("  95% confidence interval: (", lower_interval, ",", upper_interval, ")")
         print("----------------------------------------------------------------")
+
+def sampling_single(strata_dict, phi_list, nis_list, s_list, ni):
+    """
+    Calculate statistics for stratified sampling.
+
+    Args:
+    - strata_dict (dict): Dictionary of strata where each key is a stratum and each value is a list of observations.
+    - phi_list (list): List of stratum proportions.
+    - nis_list (list): List of observations in each stratum.
+    - s_list (list): List of standard deviations for each variable in each stratum.
+    - ni (list): Sample size for each stratum.
+
+    Returns:
+    - tuple: Sample mean, lower confidence interval, upper confidence interval.
+    """
+    # Vector where the estimated mean of each stratum will be stored
+    mean_Strata = [] 
+    # Vector where the estimated variance of each stratum will be stored
+    s2_Strata = [] 
+    
+    # Iterate over each stratum
+    for i, obs_list in strata_dict.items(): 
+        sample = np.random.choice(obs_list, ni[i])
+        mean_Strata.append(np.mean(sample))
+        s2_Strata.append(np.var(sample))
+
+    # Estimation of the sample mean
+    sum_mean = [phi_list[i] * mean_Strata[i] for i in range(len(phi_list))]
+    mean = np.sum(sum_mean)
+
+    # Standard error of the mean
+    sx2 = [(((phi_list[i] ** 2) * (s_list[i] ** 2)) / ni[i]) * (1 - (ni[i] / nis_list[i])) for i in range(len(phi_list))]
+    sx = np.sqrt(np.sum(sx2))
+
+    # 95% confidence interval
+    za2 = stats.norm.ppf(0.975)
+    lower_interval = mean - sx * za2
+    upper_interval = mean + sx * za2
+
+    return mean, sx, lower_interval, upper_interval

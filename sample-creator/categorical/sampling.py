@@ -26,7 +26,7 @@ def extract_population_size_and_means(statistics):
 
     return N, mu
 
-def nis_phi(classified_observations, N): 
+def nis_phi(strata_dict, N): 
     """
     Calculate the number of observations in each stratum and their proportions with respect to the total population.
 
@@ -40,7 +40,7 @@ def nis_phi(classified_observations, N):
              2. A list containing the proportion of each stratum with respect to the total population (phi).
     """
     # Calculate the number of observations in each stratum
-    nis = [len(obs_list) for obs_list in classified_observations.values()]
+    nis = [len(obs_list) for obs_list in strata_dict.values()]
 
     # Calculate the proportion of each stratum with respect to the total population
     phi = [ni / N for ni in nis]
@@ -63,7 +63,45 @@ def sample_size(epsilon, confidence): # ONLY FOR CAT
     n = (za / (2 * epsilon)) ** 2
     return math.ceil(n)
 
-def determine_ni_size(phi, combination_strata, n): 
+def determine_ni_size_single(phi, all_keys, n):
+    """
+    Calculate the sample size for each stratum based on proportions and the desired total sample size.
+
+    Args:
+    - phi (list): A list containing the proportion of each stratum with respect to the total population.
+    - all_keys (list): A list containing the unique keys for the variable.
+    - n (int): The desired total sample size.
+
+    Returns:
+    - dict: A dictionary where each key is a stratum (as a string) and each value is the calculated sample size for that stratum.
+    """
+    # Number of strata
+    K = len(phi)
+
+    # Initialize the dictionary to store the sample size for each stratum
+    n_stratum = {}
+    total_allocated = 0
+
+    # Calculate the initial sample size for each stratum
+    for i, proportion in enumerate(phi):
+        stratum_key = all_keys[0][i]
+        ni = round(proportion * n)  # Calculate the sample size for the current stratum
+        n_stratum[stratum_key] = ni  # Store the sample size in the dictionary
+        total_allocated += ni
+
+    # Calculate the difference between the total allocated and the desired total sample size
+    difference = n - total_allocated
+
+    # Distribute the difference proportionally among the strata
+    if difference != 0:
+        for i, proportion in enumerate(phi):
+            stratum_key = all_keys[0][i]
+            additional_allocation = round(proportion * difference)
+            n_stratum[stratum_key] += additional_allocation
+
+    return n_stratum
+
+def determine_ni_size_multiple(phi, combination_strata, n): 
     """
     Calculate the sample size for each stratum based on proportions and the desired total sample size.
 
@@ -83,7 +121,7 @@ def determine_ni_size(phi, combination_strata, n):
 
     # Calculate the initial sample size for each stratum
     for i, proportion in enumerate(phi):
-        stratum_key = f"({combination_strata[i][0]}, {combination_strata[i][1]})"
+        stratum_key = f"({combination_strata[i][0]}, {combination_strata[i][1]})" # TODO: Remove f"({combination_strata[i][0]}, {combination_strata[i][1]})"
         ni = round(proportion * n)  # Calculate the sample size for the current stratum
         n_stratum[stratum_key] = ni  # Store the sample size in the dictionary
         total_allocated += ni
@@ -127,6 +165,26 @@ def create_sample(n_stratum, classified_observations):
     return stratified_sample
 
 def count_combinations_final(observations): 
+    """
+    Count the occurrences of each combination, ignoring the first element of each sublist.
+
+    Args:
+    - observations (list): A list of observations where each observation is a list.
+
+    Returns:
+    - dict: A dictionary where each key is a combination (as a tuple) and each value is the count of occurrences.
+    """
+    combinations_count = Counter()
+
+    for obs in observations:
+        # Ignore the first element (name) and count the rest as a tuple
+        # combination = tuple(obs[1:])
+        combination = obs
+        combinations_count[combination] += 1
+
+    return combinations_count
+
+def count_combinations_final_multiple(observations):
     """
     Count the occurrences of each combination, ignoring the first element of each sublist.
 

@@ -42,6 +42,29 @@ def remove_nan_df(df): # Old analyze_df
     else:
         print("The dataframe does not contain NaN values.")
 
+def dictionary_to_all_lists(dictionary): 
+    """
+    Convert a dictionary into separate lists of unique keys for each variable.
+
+    Args:
+    - dictionary (dict): The input dictionary.
+
+    Returns:
+    - tuple: A tuple containing two lists of lists: one for keys and one for values.
+    """
+    # Initialize empty lists for keys and values
+    all_keys = []
+    all_values = []
+    
+    # Extract keys and values from each variable's dictionary
+    for variable_dict in dictionary.values():
+        keys = list(variable_dict.keys())
+        values = list(variable_dict.values())
+        all_keys.append(keys)
+        all_values.append(values)
+    
+    return all_keys, all_values
+
 def create_lists_from_df(df, columns=None): # SAME AS "create_variables_dict_from_df"
     """
     Create lists of column values from a DataFrame.
@@ -105,6 +128,79 @@ def count_elements_in_variables(variables_dict):
             continue
         counters_dict[variable] = Counter(values)
     return counters_dict
+
+def count_elements_in_variables_single(variables_dict): 
+    """
+    Count the occurrences of elements in each list of a variables dictionary, excluding the first variable because is the name, and return a dictionary of Counters.
+
+    Args:
+    - variables_dict (dict): The dictionary of variables where keys are variable names and values are lists of elements. The first variable is excluded from counting.
+
+    Returns:
+    - dict: A dictionary containing Counters for each variable's list of elements.
+    """
+    counters_dict = {}
+    first = True
+    for variable, values in variables_dict.items():
+        counters_dict[variable] = Counter(values)
+    return counters_dict
+
+def print_and_collect_statistics_single(variables):
+    """
+    Print statistics for each variable in the dictionary and collect them in a dictionary.
+
+    Args:
+    - variables (dict): A dictionary where keys are variable names and values are lists of variable values.
+
+    Returns:
+    - dict: A dictionary containing the statistics for each variable.
+    """
+    # Dictionary to store the statistics for each variable
+    stats_dict = {}
+    
+    # Iterate over each variable in the dictionary, but ignore the first variable
+    for i, (variable_name, values_list) in enumerate(variables.items()):
+        
+        # Calculate the population size for all variables
+        N = len(values_list)
+        
+        # Check if the variable is numerical (assuming the first value represents the type)
+        if isinstance(values_list[0], (int, float)):
+            # Calculate statistics for numerical variables
+            mean = np.mean(values_list)
+            std_dev = np.std(values_list)
+            median = np.median(values_list)
+            
+            # Store statistics in a dictionary
+            stats = {
+                'Population Size': N,
+                'Mean': mean,
+                'Median': median,
+                'Standard Deviation': std_dev
+            }
+            
+            # Print statistics
+            print(f"Statistics for numerical variable '{variable_name}':")
+            print(f"  Population Size: {N}")
+            print(f"  Mean: {mean}")
+            print(f"  Median: {median}")
+            print(f"  Standard Deviation: {std_dev}\n")
+        else:
+            # Store the number of observations for categorical variables
+            stats = {
+                'Population Size': N
+            }
+            
+            # Print the number of observations
+            print(f"Statistics for categorical variable '{variable_name}':")
+            print(f"  Population Size: {N}\n")
+        
+        # Add the statistics of the current variable to the main dictionary
+        stats_dict[variable_name] = stats
+    
+    # Return the dictionary with all the statistics
+    return stats_dict
+
 
 def print_and_collect_statistics(variables):
     """

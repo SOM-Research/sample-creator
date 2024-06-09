@@ -116,9 +116,12 @@ def print_combination_stratum_counts(classified_observations, strata_combination
     """
     total_observations = 0
     for stratum in strata_combinations:
-        obs_list = classified_observations.get(str(stratum), [])  
+        try:
+            obs_list = classified_observations[str(stratum)]
+        except KeyError:
+            continue
         num_observations = len(obs_list)  
-        if num_observations > 0:  
+        if num_observations is not None:  
             print(f"Stratum {stratum}: {num_observations} observations")
         total_observations += num_observations
 

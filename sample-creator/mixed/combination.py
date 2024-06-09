@@ -77,10 +77,10 @@ def classify_mixed_observations(observations, combination_strata): # ONLY FOR MI
     classified_observations = {str(stratum): [] for stratum in combination_strata}
 
     # Iterate over each observation
-    for obs in observations:
-        # Skip the first element (assumed to be the name)
-        name = obs[0]
-        data_values = obs[1:]
+    for data_values in observations:
+        # # Skip the first element (assumed to be the name)
+        # name = obs[0]
+        # data_values = obs[1:]
 
         # Check which stratum the observation belongs to
         for stratum in combination_strata:
@@ -88,7 +88,7 @@ def classify_mixed_observations(observations, combination_strata): # ONLY FOR MI
             min_val, max_val = range_values
 
             if variable == data_values[0] and min_val <= data_values[1] <= max_val:
-                classified_observations[str(stratum)].append(obs)
+                classified_observations[str(stratum)].append(data_values)
                 break
 
     return classified_observations

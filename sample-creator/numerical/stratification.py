@@ -60,3 +60,19 @@ def print_stratum_counts(strata):
         print(f"Variable: {variable_name}")
         for stratum_id, elements in stratum_dict.items():
             print(f"  Stratum {stratum_id + 1}: {len(elements)} points")
+
+#One Numerical:
+def get_stratum_dict(variables):
+    """
+    Get the stratum dictionary for the first variable.
+
+    Args:
+    - variables (dict): A dictionary where keys are variable names and values are lists of variable values.
+
+    Returns:
+    - dict: The stratum dictionary for the first variable.
+    """
+    # Obtain the dictionary of strata for the first variable
+    stratum_dict = next(iter(variables.values()))
+    
+    return stratum_dict
