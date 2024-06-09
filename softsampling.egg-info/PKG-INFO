@@ -1,0 +1,19 @@
+Metadata-Version: 2.1
+Name: softsampling
+Version: 0.0.1
+Summary: sampling for software repositories
+Author: Anonymous
+License: CC BY-SA
+Keywords: sampling,software repositories,empirical studies
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: matplotlib==3.9.0
+Requires-Dist: numpy==1.26.4
+Requires-Dist: pandas==2.2.2
+Requires-Dist: scikit_learn==1.5.0
+Requires-Dist: scipy==1.13.1
+
+# Sample creator 
+
+Implementation package of the "On the Creation of Representative Samples of Software Repositories" paper (under review). 
+The running example is showcased in the Zenodo repository.

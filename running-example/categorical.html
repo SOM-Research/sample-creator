@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>case_3</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>categorical</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7517,10 +7517,10 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">mixed.sampling</span> <span class="k">as</span> <span class="nn">mix_sampling</span>
-<span class="kn">import</span> <span class="nn">utils.preprocessing</span> <span class="k">as</span> <span class="nn">preprocessing</span>
-<span class="kn">import</span> <span class="nn">mixed.stratification</span> <span class="k">as</span> <span class="nn">mix_stratification</span>
-<span class="kn">import</span> <span class="nn">mixed.combination</span> <span class="k">as</span> <span class="nn">mix_combination</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">softsampling.categorical.stratification</span> <span class="k">as</span> <span class="nn">cat_stratification</span>
+<span class="kn">import</span> <span class="nn">softsampling.utils.preprocessing</span> <span class="k">as</span> <span class="nn">preprocessing</span>
+<span class="kn">import</span> <span class="nn">softsampling.categorical.sampling</span> <span class="k">as</span> <span class="nn">cat_sampling</span> 
+<span class="kn">import</span> <span class="nn">softsampling.categorical.combination</span> <span class="k">as</span> <span class="nn">cat_combination</span>
 </pre></div>
 </div>
 </div>
@@ -7533,18 +7533,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Sampling-of-mixed-variables">Sampling of mixed variables<a class="anchor-link" href="#Sampling-of-mixed-variables">¶</a></h2>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>In this case, we sample two variables, one categorical and one numerical.</p>
+<h2 id="Categorical-sampling-of-1-variable">Categorical sampling of 1 variable<a class="anchor-link" href="#Categorical-sampling-of-1-variable">¶</a></h2>
 </div>
 </div>
 </div>
@@ -7567,29 +7556,19 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">file_path</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"type_likes.csv"</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"PREPROCESSING:"</span><span class="p">)</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"type_likes.csv"</span> 
 <span class="n">df</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">read_dataframe</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"likes"</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">preprocessing</span><span class="o">.</span><span class="n">remove_nan_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+<span class="n">preprocessing</span><span class="o">.</span><span class="n">remove_nan_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">variables</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">create_lists_from_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> 
+<span class="n">counters</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">count_elements_in_variables_single</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
 
-<span class="n">variables</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">create_lists_from_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="n">numerical_variables</span><span class="p">,</span> <span class="n">categorical_variables</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">separate_numerical_categorical</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Numerical variables:"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">variable_name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">numerical_variables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">variable_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Categorical variables:"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">variable_name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">categorical_variables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">variable_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="n">counters</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">count_elements_in_variables_single</span><span class="p">(</span><span class="n">categorical_variables</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Counter: "</span><span class="p">,</span> <span class="n">counters</span><span class="p">)</span>
 <span class="n">all_keys</span><span class="p">,</span> <span class="n">all_values</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">dictionary_to_all_lists</span><span class="p">(</span><span class="n">counters</span><span class="p">)</span>
 
-<span class="c1"># Only for numerical</span>
-<span class="n">statistics</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">print_and_collect_statistics</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+<span class="n">statistics</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">print_and_collect_statistics_single</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7602,29 +7581,21 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>The dataframe does not contain NaN values.
-      type  likes
-0  dataset      8
-1  dataset      0
-2  dataset      0
-3  dataset      0
-4  dataset      0
-5  dataset      0
-6  dataset      0
-7  dataset      0
-8  dataset      0
-9  dataset      0
-Numerical variables:
-likes: 674827
-
-Categorical variables:
-type: 674827
-Counter:  {'type': Counter({'model': 456303, 'space': 116843, 'dataset': 101681})}
-Statistics for numerical variable 'likes':
+<pre>PREPROCESSING:
+      type
+0  dataset
+1  dataset
+2  dataset
+3  dataset
+4  dataset
+5  dataset
+6  dataset
+7  dataset
+8  dataset
+9  dataset
+The dataframe does not contain NaN values.
+Statistics for categorical variable 'type':
   Population Size: 674827
-  Mean: 1.134440382498033
-  Median: 0.0
-  Standard Deviation: 28.127517598840843
 
 </pre>
 </div>
@@ -7650,26 +7621,10 @@ Statistics for numerical variable 'likes':
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">categorical_strata_dict</span> <span class="o">=</span> <span class="n">mix_stratification</span><span class="o">.</span><span class="n">create_strata_categoricals</span><span class="p">(</span><span class="n">counters</span><span class="p">)</span> 
-
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">strata_dict</span> <span class="o">=</span> <span class="n">cat_stratification</span><span class="o">.</span><span class="n">create_strata_single</span><span class="p">(</span><span class="n">counters</span><span class="p">)</span> 
 <span class="nb">print</span><span class="p">(</span><span class="s2">"STRATA DICT:"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">variable</span><span class="p">,</span> <span class="n">strata</span> <span class="ow">in</span> <span class="n">categorical_strata_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Strata for variable '</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strata</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">strata</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Length of stratum </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sublist</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-
-<span class="n">num_clusters_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1"># Elbow Method to be implemented in next release</span>
-<span class="n">numerical_strata_dict</span> <span class="o">=</span> <span class="n">mix_stratification</span><span class="o">.</span><span class="n">create_strata_kmeans</span><span class="p">(</span><span class="n">numerical_variables</span><span class="p">,</span> <span class="n">num_clusters_list</span><span class="p">)</span> 
-<span class="n">mix_stratification</span><span class="o">.</span><span class="n">print_stratum_counts</span><span class="p">(</span><span class="n">numerical_strata_dict</span><span class="p">)</span> 
-
-<span class="n">merged_strata</span> <span class="o">=</span> <span class="n">mix_stratification</span><span class="o">.</span><span class="n">merge_strata_dicts</span><span class="p">(</span><span class="n">categorical_strata_dict</span><span class="p">,</span> <span class="n">numerical_strata_dict</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"MERGED STRATA"</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">variable_name</span><span class="p">,</span> <span class="n">stratum_list</span> <span class="ow">in</span> <span class="n">merged_strata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Variable: </span><span class="si">{</span><span class="n">variable_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">stratum_values</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stratum_list</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Stratum </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">stratum_values</span><span class="p">)</span><span class="si">}</span><span class="s2"> points"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">strata_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Length of '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7683,98 +7638,9 @@ Statistics for numerical variable 'likes':
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>STRATA DICT:
-Strata for variable 'type': 3
-Length of stratum 1: 101681
-Length of stratum 2: 456303
-Length of stratum 3: 116843
-Variable: likes
-  Stratum 1: 674493 points
-  Stratum 2: 21 points
-  Stratum 3: 313 points
-MERGED STRATA
-Variable: type
-  Stratum 1: 101681 points
-  Stratum 2: 456303 points
-  Stratum 3: 116843 points
-Variable: likes
-  Stratum 1: 674493 points
-  Stratum 2: 21 points
-  Stratum 3: 313 points
-Variable: likes
-  Stratum 1: 674493 points
-  Stratum 2: 21 points
-  Stratum 3: 313 points
-MERGED STRATA
-Variable: type
-  Stratum 1: 101681 points
-  Stratum 2: 456303 points
-  Stratum 3: 116843 points
-Variable: likes
-  Stratum 1: 674493 points
-  Stratum 2: 21 points
-  Stratum 3: 313 points
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Combination">Combination<a class="anchor-link" href="#Combination">¶</a></h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">numerical_ranges</span> <span class="o">=</span> <span class="n">mix_combination</span><span class="o">.</span><span class="n">get_stratum_ranges</span><span class="p">(</span><span class="n">numerical_strata_dict</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Ranges:"</span><span class="p">,</span> <span class="n">numerical_ranges</span><span class="p">)</span>
-<span class="n">combination_strata</span> <span class="o">=</span> <span class="n">mix_combination</span><span class="o">.</span><span class="n">combination</span><span class="p">(</span><span class="n">numerical_ranges</span><span class="p">,</span> <span class="n">all_keys</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">combination_strata</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">combination_strata</span><span class="p">))</span>
-<span class="n">observations</span> <span class="o">=</span> <span class="n">mix_combination</span><span class="o">.</span><span class="n">df_to_list_observations</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-
-<span class="n">classified_observations</span> <span class="o">=</span> <span class="n">mix_combination</span><span class="o">.</span><span class="n">classify_mixed_observations</span><span class="p">(</span><span class="n">observations</span><span class="p">,</span> <span class="n">combination_strata</span><span class="p">)</span>
-<span class="n">total_observations</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">stratum</span><span class="p">,</span> <span class="n">obs_list</span> <span class="ow">in</span> <span class="n">classified_observations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="n">total_observations</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs_list</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Stratum: </span><span class="si">{</span><span class="n">stratum</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">obs_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> observations"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Total Observations:"</span><span class="p">,</span> <span class="n">total_observations</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Ranges: {'likes': [[0, 315], [2285, 9909], [317, 1930]]}
-[['dataset', [0, 315]], ['dataset', [2285, 9909]], ['dataset', [317, 1930]], ['model', [0, 315]], ['model', [2285, 9909]], ['model', [317, 1930]], ['space', [0, 315]], ['space', [2285, 9909]], ['space', [317, 1930]]]
-9
-Stratum: ['dataset', [0, 315]]: 101657 observations
-Stratum: ['dataset', [2285, 9909]]: 1 observations
-Stratum: ['dataset', [317, 1930]]: 23 observations
-Stratum: ['model', [0, 315]]: 456066 observations
-Stratum: ['model', [2285, 9909]]: 17 observations
-Stratum: ['model', [317, 1930]]: 220 observations
-Stratum: ['space', [0, 315]]: 116770 observations
-Stratum: ['space', [2285, 9909]]: 3 observations
-Stratum: ['space', [317, 1930]]: 70 observations
-Total Observations: 674827
+Length of 'dataset': 101681
+Length of 'model': 456303
+Length of 'space': 116843
 </pre>
 </div>
 </div>
@@ -7799,19 +7665,19 @@ Total Observations: 674827
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">N</span><span class="p">,</span> <span class="n">means</span> <span class="o">=</span> <span class="n">mix_sampling</span><span class="o">.</span><span class="n">extract_population_size_and_means</span><span class="p">(</span><span class="n">statistics</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">N</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cat_sampling</span><span class="o">.</span><span class="n">extract_population_size_and_means</span><span class="p">(</span><span class="n">statistics</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Population Size: </span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">nis</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">mix_sampling</span><span class="o">.</span><span class="n">nis_phi</span><span class="p">(</span><span class="n">classified_observations</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">nis</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">cat_sampling</span><span class="o">.</span><span class="n">nis_phi</span><span class="p">(</span><span class="n">strata_dict</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Number of observations in each stratum (nis): </span><span class="si">{</span><span class="n">nis</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Proportion of each stratum (phi): </span><span class="si">{</span><span class="n">phi</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.05</span>
 <span class="n">confidence</span> <span class="o">=</span> <span class="mf">0.95</span>
-<span class="n">n</span> <span class="o">=</span> <span class="n">mix_sampling</span><span class="o">.</span><span class="n">sample_size</span><span class="p">(</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">confidence</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">cat_sampling</span><span class="o">.</span><span class="n">sample_size</span><span class="p">(</span><span class="n">epsilon</span><span class="p">,</span> <span class="n">confidence</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Required sample size:"</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
 
-<span class="n">ni_size</span> <span class="o">=</span> <span class="n">mix_sampling</span><span class="o">.</span><span class="n">determine_ni_size</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">combination_strata</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Ssample size of each strata:"</span><span class="p">)</span>
+<span class="n">ni_size</span> <span class="o">=</span> <span class="n">cat_sampling</span><span class="o">.</span><span class="n">determine_ni_size_single</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">all_keys</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Sample size of each strata:"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">stratum_key</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">ni_size</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Stratum </span><span class="si">{</span><span class="n">stratum_key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> observations"</span><span class="p">)</span>
 </pre></div>
@@ -7827,19 +7693,54 @@ Total Observations: 674827
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Population Size: 674827
-Number of observations in each stratum (nis): [101657, 1, 23, 456066, 17, 220, 116770, 3, 70]
-Proportion of each stratum (phi): [0.15064157183989377, 1.4818612770384112e-06, 3.408280937188346e-05, 0.6758265451738001, 2.5191641709652992e-05, 0.0003260094809484505, 0.1730369413197753, 4.445583831115234e-06, 0.00010373028939268879]
+Number of observations in each stratum (nis): [101681, 456303, 116843]
+Proportion of each stratum (phi): [0.1506771365105427, 0.6761777462964582, 0.1731451171929991]
 Required sample size: 385
-Ssample size of each strata:
-Stratum (dataset, [0, 315]): 58 observations
-Stratum (dataset, [2285, 9909]): 0 observations
-Stratum (dataset, [317, 1930]): 0 observations
-Stratum (model, [0, 315]): 260 observations
-Stratum (model, [2285, 9909]): 0 observations
-Stratum (model, [317, 1930]): 0 observations
-Stratum (space, [0, 315]): 67 observations
-Stratum (space, [2285, 9909]): 0 observations
-Stratum (space, [317, 1930]): 0 observations
+Sample size of each strata:
+Stratum dataset: 58 observations
+Stratum model: 260 observations
+Stratum space: 67 observations
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">sample</span> <span class="o">=</span> <span class="n">cat_sampling</span><span class="o">.</span><span class="n">create_sample</span><span class="p">(</span><span class="n">ni_size</span><span class="p">,</span> <span class="n">strata_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total stratified sample size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Total stratified sample size: 385
 </pre>
 </div>
 </div>
@@ -7853,12 +7754,11 @@ Stratum (space, [317, 1930]): 0 observations
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">combined_sample</span> <span class="o">=</span> <span class="n">mix_sampling</span><span class="o">.</span><span class="n">create_sample</span><span class="p">(</span><span class="n">classified_observations</span><span class="p">,</span> <span class="n">ni_size</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Combined Sample Size:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">combined_sample</span><span class="p">))</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">final_combination_counts</span> <span class="o">=</span> <span class="n">cat_sampling</span><span class="o">.</span><span class="n">count_combinations_final</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">First 10 elements of the combined sample:"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">combined_sample</span><span class="p">))):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">combined_sample</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Counts of each combination:"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">combination</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">final_combination_counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Combination: </span><span class="si">{</span><span class="n">combination</span><span class="si">}</span><span class="s2">, Count: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7871,19 +7771,10 @@ Stratum (space, [317, 1930]): 0 observations
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Combined Sample Size: 385
-
-First 10 elements of the combined sample:
-['dataset', 0]
-['dataset', 0]
-['dataset', 0]
-['dataset', 0]
-['dataset', 0]
-['dataset', 0]
-['dataset', 2]
-['dataset', 0]
-['dataset', 1]
-['dataset', 0]
+<pre>Counts of each combination:
+Combination: dataset, Count: 58
+Combination: model, Count: 260
+Combination: space, Count: 67
 </pre>
 </div>
 </div>

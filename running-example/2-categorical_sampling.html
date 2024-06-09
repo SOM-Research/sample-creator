@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>case_2</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>2-categorical_sampling</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7517,10 +7517,10 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">categorical.stratification</span> <span class="k">as</span> <span class="nn">cat_stratification</span>
-<span class="kn">import</span> <span class="nn">utils.preprocessing</span> <span class="k">as</span> <span class="nn">preprocessing</span>
-<span class="kn">import</span> <span class="nn">categorical.sampling</span> <span class="k">as</span> <span class="nn">cat_sampling</span> 
-<span class="kn">import</span> <span class="nn">categorical.combination</span> <span class="k">as</span> <span class="nn">cat_combination</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">softsampling.categorical.stratification</span> <span class="k">as</span> <span class="nn">cat_stratification</span>
+<span class="kn">import</span> <span class="nn">softsampling.utils.preprocessing</span> <span class="k">as</span> <span class="nn">preprocessing</span>
+<span class="kn">import</span> <span class="nn">softsampling.categorical.sampling</span> <span class="k">as</span> <span class="nn">cat_sampling</span> 
+<span class="kn">import</span> <span class="nn">softsampling.categorical.combination</span> <span class="k">as</span> <span class="nn">cat_combination</span>
 </pre></div>
 </div>
 </div>
@@ -7952,13 +7952,6 @@ Length of stratum 2: 105829
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>[['dataset', 0], ['dataset', 1], ['model', 0], ['model', 1], ['space', 0], ['space', 1]]
 {'(dataset, 0)': 22557, '(dataset, 1)': 12701, '(model, 0)': 20715, '(model, 1)': 88985, '(space, 0)': 18388, '(space, 1)': 4143}
-CLASSIFIED OBSERVATIONS
-Stratum (dataset, 0): 22557 observations
-Stratum (dataset, 1): 12701 observations
-Stratum (model, 1): 88985 observations
-Stratum (model, 0): 20715 observations
-Stratum (space, 1): 4143 observations
-Stratum (space, 0): 18388 observations
 CLASSIFIED OBSERVATIONS
 Stratum (dataset, 0): 22557 observations
 Stratum (dataset, 1): 12701 observations

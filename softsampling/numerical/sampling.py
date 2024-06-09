@@ -269,7 +269,7 @@ def __sampling_multiple__(classified_observations, index, phi_list, nis_list, s_
 
     return mean, lower_interval, upper_interval 
 
-def sampling_multiple(classified_observations, phi, nis, s, max_n_idx, max_n, max_n_dist):
+def sampling_multiple(variable_names, classified_observations, phi, nis, s, max_n_idx, max_n, max_n_dist):
     """
     Perform sampling for all variables in classified_observations and print the results.
 
@@ -282,7 +282,6 @@ def sampling_multiple(classified_observations, phi, nis, s, max_n_idx, max_n, ma
     - max_n (int): Maximum sample size.
     - max_n_dist (list): List representing the distribution of the stratum with the maximum sample size.
     """
-    variable_names = list(variables.keys()) # TODO: Where does this variable come from? Which variable should be?
     
     for idx, variable_name in enumerate(variable_names): 
         if idx == 0:
