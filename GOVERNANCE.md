@@ -4,12 +4,12 @@ The development and community management of the project will follow the governan
 
 ## Project Maintainers
 
-Project maintainers have admin access to the GitHub repository. The team of project maintainer is the following:
+Project maintainers have admin access to the GitHub repository. The team of project maintainers is the following:
 
-* [June Gorostidi](https://github.com/gorosjune/) 
 * [Adem Ait](https://github.com/ademait/) 
 * [Javier Cánovas](https://github.com/jlcanovas/) 
 * [Jordi Cabot](https://github.com/jcabot/) 
+* [June Gorostidi](https://github.com/gorosjune/) 
 
 ## Project Collaborators & Contributors
 
