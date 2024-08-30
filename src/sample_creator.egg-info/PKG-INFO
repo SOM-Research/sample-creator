@@ -1,0 +1,22 @@
+Metadata-Version: 2.1
+Name: sample_creator
+Version: 0.0.2
+Summary: Representative sample creator
+Author: SOM Research Lab
+License: CC BY-SA
+Project-URL: Source Code, https://github.com/SOM-Research/sample-creator
+Project-URL: Bug Tracker, https://github.com/SOM-Research/sample-creator/issues
+Keywords: sampling,representative samples
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: matplotlib==3.9.0
+Requires-Dist: numpy==1.26.4
+Requires-Dist: pandas==2.2.2
+Requires-Dist: scikit_learn==1.5.0
+Requires-Dist: scipy==1.13.1
+
+# Sample Creator
+
+This library provides the implementation of the approach presented in the paper [*On the Creation of Representative Samples of Software Repositories*](https://conf.researchr.org/details/esem-2024/esem-2024-emerging-results-vision-and-reflection-papers/7/On-the-Creation-of-Representative-Samples-of-Software-Repositories) accepted on the [*18th ACM/IEEE International Symposium on Empirical Software Engineering and Measurement (ESEM 2024)*](https://conf.researchr.org/home/esem-2024) conference. 
+
+For more information, please see the [GitHub repository](https://github.com/SOM-Research/sample-creator).

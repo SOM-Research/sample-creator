@@ -3,9 +3,9 @@ This repository provides the implementation (and replication package) of the app
 # What is this repository about?
 
 This repository contains the implementation of a methodology for creating representative samples from datasets.
-The tool allows selecting one or more variables (categorical o numerical) of interest related to software repositories to build a sample that is representative for such variables.  
+The tool allows selecting one or more variables (categorical or numerical) of interest related to software repositories to build a sample that is representative for such variables.  
 
-The methodology employes stratified random sampling to create representative samples, focusing on key variables of interest. The following figure illustrates the approach. 
+The methodology employs stratified random sampling to create representative samples, focusing on key variables of interest. The following figure illustrates the approach. 
 
 ![Approach](approach.png)
 
@@ -30,8 +30,8 @@ In this repository you will find both the source code of the tool implementation
 
 The implementation of the methodology is offered as a Python library.
 
-It is indexed in [PyPi](https://pypi.org/project/softsampling/), published as `softsampling`.
-The code of the library is in the `softsampling/` folder.
+It is indexed in [PyPi](https://pypi.org/project/sample-creator/), published as `sample-creator`.
+The source code of the library is in the `src/` folder.
 
 The modules have been separated according to the variable type used to created the sample (i.e., numerical, categorical, or mixed), and one additional module for the preprocessing steps.
 
